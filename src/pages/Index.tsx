@@ -13,8 +13,18 @@ interface Section {
   visited: boolean;
 }
 
+interface MapLocation {
+  id: string;
+  name: string;
+  description: string;
+  coordinates: string;
+  category: 'ostrog' | 'sobor' | 'slovo';
+  icon: string;
+}
+
 const Index = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [sections, setSections] = useState<Section[]>([
     {
       id: 'ostrog',
@@ -88,6 +98,49 @@ const Index = () => {
     return content[sectionId as keyof typeof content];
   };
 
+  const mapLocations: MapLocation[] = [
+    {
+      id: 'loc1',
+      name: 'Омская крепость (Острог)',
+      description: 'Место заключения Достоевского (1850-1854)',
+      coordinates: '54.9924° N, 73.3686° E',
+      category: 'ostrog',
+      icon: 'Shield'
+    },
+    {
+      id: 'loc2',
+      name: 'Воскресенский военный собор',
+      description: 'Храм, который посещал писатель',
+      coordinates: '54.9945° N, 73.3698° E',
+      category: 'sobor',
+      icon: 'Church'
+    },
+    {
+      id: 'loc3',
+      name: 'Дом коменданта',
+      description: 'Административный центр крепости',
+      coordinates: '54.9935° N, 73.3692° E',
+      category: 'ostrog',
+      icon: 'Home'
+    },
+    {
+      id: 'loc4',
+      name: 'Литературный музей им. Достоевского',
+      description: 'Современный музей писателя',
+      coordinates: '54.9889° N, 73.3692° E',
+      category: 'slovo',
+      icon: 'BookOpen'
+    },
+    {
+      id: 'loc5',
+      name: 'Иртышская набережная',
+      description: 'Место прогулок заключённых',
+      coordinates: '54.9950° N, 73.3710° E',
+      category: 'ostrog',
+      icon: 'Waves'
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {!activeSection ? (
@@ -153,18 +206,60 @@ const Index = () => {
             ))}
           </div>
 
-          <div className="mt-16 text-center">
-            <Card className="bg-card/50 border-2 border-secondary/30 p-8 max-w-2xl mx-auto">
-              <Icon name="Sparkles" size={32} className="text-secondary mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-3">Онлайн-квест</h3>
-              <p className="text-muted-foreground mb-4">
-                Выполните задания во всех разделах, чтобы получить сертификат исследователя 
-                литературного наследия Достоевского
-              </p>
-              <Badge variant="secondary" className="text-lg px-4 py-2">
-                #ОмскДостоевского
-              </Badge>
-            </Card>
+          <div className="mt-16 space-y-8">
+            <div className="text-center">
+              <h2 className="text-4xl font-bold mb-4">Литературная карта Омска</h2>
+              <p className="text-muted-foreground mb-8">Интерактивная карта мест, связанных с пребыванием Достоевского</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {mapLocations.map((location, index) => {
+                const categoryColor = {
+                  ostrog: 'border-red-800 hover:bg-red-900/10',
+                  sobor: 'border-blue-800 hover:bg-blue-900/10',
+                  slovo: 'border-purple-800 hover:bg-purple-900/10'
+                };
+
+                return (
+                  <Card
+                    key={location.id}
+                    className={`border-2 p-5 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${categoryColor[location.category]} ${selectedLocation === location.id ? 'ring-2 ring-primary' : ''}`}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                    onClick={() => setSelectedLocation(selectedLocation === location.id ? null : location.id)}
+                  >
+                    <div className="flex items-start gap-3 mb-3">
+                      <Icon name={location.icon} size={28} className="text-primary flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg mb-1 leading-tight">{location.name}</h3>
+                        <p className="text-sm text-muted-foreground">{location.description}</p>
+                      </div>
+                    </div>
+                    {selectedLocation === location.id && (
+                      <div className="mt-4 pt-4 border-t border-border animate-fade-in">
+                        <div className="flex items-center gap-2 text-xs text-accent">
+                          <Icon name="MapPin" size={14} />
+                          <span className="font-mono">{location.coordinates}</span>
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                );
+              })}
+            </div>
+
+            <div className="text-center">
+              <Card className="bg-card/50 border-2 border-secondary/30 p-8 max-w-2xl mx-auto">
+                <Icon name="Sparkles" size={32} className="text-secondary mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-3">Онлайн-квест</h3>
+                <p className="text-muted-foreground mb-4">
+                  Выполните задания во всех разделах, чтобы получить сертификат исследователя 
+                  литературного наследия Достоевского
+                </p>
+                <Badge variant="secondary" className="text-lg px-4 py-2">
+                  #ОмскДостоевского
+                </Badge>
+              </Card>
+            </div>
           </div>
         </div>
       ) : (
