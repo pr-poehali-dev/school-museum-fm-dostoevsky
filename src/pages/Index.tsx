@@ -66,6 +66,8 @@ const Index = () => {
       sobor: {
         quote: '«Я верю, что есть Бог и жизнь будущая. В этом всё моё упование»',
         description: 'Воскресенский военный собор был единственным местом духовного утешения. Здесь писатель находил силы для внутреннего возрождения.',
+        image: 'https://cdn.poehali.dev/files/f3abbce0-707e-4926-8e21-979354bb3078.png',
+        imageCaption: 'Фрагмент арки Воскресенского собора с резьбой',
         points: [
           { name: 'Иконостас', desc: 'Художественное убранство собора', year: '1769' },
           { name: 'Библиотека', desc: 'Собрание духовной литературы', year: '1840-е' },
@@ -201,6 +203,21 @@ const Index = () => {
                     {content.description}
                   </p>
                 </div>
+
+                {content.image && (
+                  <Card className="mb-8 overflow-hidden border-2 border-primary/20">
+                    <img 
+                      src={content.image} 
+                      alt={content.imageCaption || 'Артефакт музея'} 
+                      className="w-full h-auto object-cover"
+                    />
+                    {content.imageCaption && (
+                      <div className="p-4 bg-card/60">
+                        <p className="text-sm text-muted-foreground italic">{content.imageCaption}</p>
+                      </div>
+                    )}
+                  </Card>
+                )}
 
                 <h2 className="text-3xl font-bold mb-6">Ключевые точки</h2>
                 
